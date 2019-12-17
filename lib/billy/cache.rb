@@ -68,7 +68,7 @@ module Billy
       @cache = {}
     end
 
-    def key(method, orig_url, body, log_key = false)
+    def key(method, orig_url, body, log_key = false, append_hash = false)
       if Billy.config.use_ignore_params
         ignore_params = Billy.config.ignore_params.include?(format_url(orig_url, true))
       else
@@ -83,7 +83,7 @@ module Billy
             end
       body_msg = ''
 
-      if Billy.config.cache_request_body_methods.include?(method) && !ignore_params && !merge_cached_response_key
+      if append_hash && Billy.config.cache_request_body_methods.include?(method) && !ignore_params && !merge_cached_response_key
         body_formatted = JSONUtils.json?(body.to_s) ? JSONUtils.sort_json(body.to_s) : body.to_s
         body_msg = " with body '#{body_formatted}'"
         key += '_' + Digest::SHA1.hexdigest(body_formatted)
